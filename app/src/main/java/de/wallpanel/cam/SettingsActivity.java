@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 /** MQTT broker form. Opened from the camera notification, not from the launcher. */
@@ -16,6 +17,7 @@ public final class SettingsActivity extends Activity {
     private EditText port;
     private EditText user;
     private EditText password;
+    private RadioGroup fps;
     private TextView status;
     private TextView error;
     private CamService service;
@@ -47,6 +49,7 @@ public final class SettingsActivity extends Activity {
         port = findViewById(R.id.port);
         user = findViewById(R.id.user);
         password = findViewById(R.id.password);
+        fps = findViewById(R.id.fps);
         status = findViewById(R.id.status);
         error = findViewById(R.id.error);
         fill(Prefs.load(this));
@@ -75,6 +78,34 @@ public final class SettingsActivity extends Activity {
         port.setText(Integer.toString(config.port));
         user.setText(config.user);
         password.setText(config.password);
+        fps.check(fpsId(config.fps));
+    }
+
+    private static int fpsId(int value) {
+        if (value == 5) {
+            return R.id.fps_5;
+        }
+        if (value == 10) {
+            return R.id.fps_10;
+        }
+        if (value == 15) {
+            return R.id.fps_15;
+        }
+        return R.id.fps_20;
+    }
+
+    private int selectedFps() {
+        int id = fps.getCheckedRadioButtonId();
+        if (id == R.id.fps_5) {
+            return 5;
+        }
+        if (id == R.id.fps_10) {
+            return 10;
+        }
+        if (id == R.id.fps_15) {
+            return 15;
+        }
+        return 20;
     }
 
     private void saveAndReconnect() {
@@ -101,7 +132,8 @@ public final class SettingsActivity extends Activity {
                 hostText,
                 portNumber,
                 user.getText().toString(),
-                password.getText().toString()));
+                password.getText().toString(),
+                selectedFps()));
         Intent serviceIntent = new Intent(this, CamService.class);
         serviceIntent.setAction(CamService.ACTION_RECONNECT);
         startForegroundService(serviceIntent);

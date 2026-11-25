@@ -18,8 +18,13 @@ final class AvcEncoder {
     static final int CAMERA_WIDTH = 1600;
     static final int CAMERA_HEIGHT = 1200;
     static final int BITRATE = 4_000_000;
-    static final int FRAME_RATE = 20;
     static final int I_FRAME_SEC = 2;
+
+    private final int frameRate;
+
+    AvcEncoder(int frameRate) {
+        this.frameRate = Prefs.fps(frameRate);
+    }
 
     interface Listener {
         void onCodecConfig(byte[] annexb);
@@ -46,7 +51,8 @@ final class AvcEncoder {
             configure(encoder, false);
         }
         Log.i(TAG, "encoder " + encoder.getName()
-                + (baselineError == null ? " baseline" : " default-profile"));
+                + (baselineError == null ? " baseline" : " default-profile")
+                + " " + frameRate + " fps");
         surface = encoder.createInputSurface();
         encoder.start();
         running = true;
@@ -103,11 +109,11 @@ final class AvcEncoder {
         }
     }
 
-    private static void configure(MediaCodec codec, boolean baseline) {
+    private void configure(MediaCodec codec, boolean baseline) {
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, WIDTH, HEIGHT);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, BITRATE);
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_SEC);
         if (Build.VERSION.SDK_INT >= 29) {
             format.setInteger(MediaFormat.KEY_PREPEND_HEADER_TO_SYNC_FRAMES, 1);

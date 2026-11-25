@@ -26,6 +26,11 @@ final class RtspServer {
     private static final String PUBLIC = "OPTIONS, DESCRIBE, SETUP, PLAY, TEARDOWN, GET_PARAMETER";
 
     private final Rtp.Packetizer packetizer = new Rtp.Packetizer(0x57414C4C, 1200);
+    private final int frameRate;
+
+    RtspServer(int frameRate) {
+        this.frameRate = Prefs.fps(frameRate);
+    }
     private final CopyOnWriteArrayList<Client> clients = new CopyOnWriteArrayList<>();
     private final Object params = new Object();
     private final AtomicBoolean running = new AtomicBoolean();
@@ -54,7 +59,7 @@ final class RtspServer {
         }
         long ts = presentationTimeUs * 90L / 1000L;
         if (ts <= lastTs) {
-            ts = lastTs + (Rtp.CLOCK / AvcEncoder.FRAME_RATE);
+            ts = lastTs + (Rtp.CLOCK / frameRate);
         }
         lastTs = ts;
         Rtp.Sets sets = packetizer.packetizeAccessUnit(data, ts, sps, pps);

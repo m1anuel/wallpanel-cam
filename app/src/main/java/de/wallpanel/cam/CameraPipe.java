@@ -191,7 +191,7 @@ final class CameraPipe {
         builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
         builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
         if (withFps) {
-            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<>(20, 20));
+            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<>(FramePace.CAMERA_FPS, FramePace.CAMERA_FPS));
         }
         try {
             captureSession.setRepeatingRequest(builder.build(), null, handler);
@@ -199,7 +199,7 @@ final class CameraPipe {
             if (!withFps) {
                 throw e;
             }
-            Log.w(TAG, "AE 20/20 abgelehnt, ohne FPS-Vorgabe");
+            Log.w(TAG, "AE " + FramePace.CAMERA_FPS + " abgelehnt, ohne FPS-Vorgabe");
             repeating(device, captureSession, target, false);
         }
     }

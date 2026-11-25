@@ -72,12 +72,16 @@ final class GlFrame {
     private final float[] texMatrix = new float[16];
     private volatile String error;
     private volatile boolean released;
+    private int frameRate = Prefs.DEFAULT_FPS;
+    private FramePace pace;
 
     String error() {
         return error == null ? "" : error;
     }
 
-    Surface start(Surface encoderSurface) {
+    Surface start(Surface encoderSurface, int fps) {
+        frameRate = Prefs.fps(fps);
+        pace = new FramePace(frameRate);
         thread = new HandlerThread("wallpanel-gl");
         thread.start();
         handler = new Handler(thread.getLooper());
@@ -204,7 +208,8 @@ final class GlFrame {
                 1f, 1f
         });
         GLES20.glViewport(0, 0, AvcEncoder.WIDTH, AvcEncoder.HEIGHT);
-        Log.i(TAG, "gl rot=" + FrameOrientation.DEGREES + " mirror=" + FrameOrientation.MIRROR);
+        Log.i(TAG, "gl rot=" + FrameOrientation.DEGREES + " mirror=" + FrameOrientation.MIRROR
+                + " fps=" + frameRate);
     }
 
     private void drawFrame() {
@@ -213,6 +218,9 @@ final class GlFrame {
         }
         try {
             surfaceTexture.updateTexImage();
+            if (pace != null && !pace.take()) {
+                return;
+            }
             surfaceTexture.getTransformMatrix(texMatrix);
             GLES20.glViewport(0, 0, AvcEncoder.WIDTH, AvcEncoder.HEIGHT);
             GLES20.glClearColor(0f, 0f, 0f, 1f);

@@ -71,6 +71,52 @@
             android:inputType="textPassword"
             android:minHeight="48dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="@string/hint_fps"
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/fps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/fps_5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/fps_5" />
+
+            <RadioButton
+                android:id="@+id/fps_10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/fps_10" />
+
+            <RadioButton
+                android:id="@+id/fps_15"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/fps_15" />
+
+            <RadioButton
+                android:id="@+id/fps_20"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/fps_20" />
+        </RadioGroup>
+
         <Button
             android:id="@+id/save"
             android:layout_width="match_parent"

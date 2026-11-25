@@ -7,6 +7,11 @@
     <string name="hint_port">Port</string>
     <string name="hint_user">Benutzer</string>
     <string name="hint_password">Passwort</string>
+    <string name="hint_fps">Bilder pro Sekunde</string>
+    <string name="fps_5">5</string>
+    <string name="fps_10">10</string>
+    <string name="fps_15">15</string>
+    <string name="fps_20">20</string>
     <string name="save">Speichern und verbinden</string>
-    <string name="help">Speichern verbindet neu. Der Schalter in Home Assistant bleibt. Zurück blendet diese Seite aus.</string>
+    <string name="help">Speichern verbindet neu. Läuft die Kamera, startet der Stream mit der neuen Bildrate. Der Schalter in Home Assistant bleibt. Zurück blendet diese Seite aus.</string>
 </resources>

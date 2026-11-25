@@ -150,6 +150,7 @@ public final class CamService extends Service {
         generation++;
         setStatus("Verbinde…", "");
         io.execute(this::connectNow);
+        control.execute(this::restartPipelineIfOn);
     }
 
     @Override
@@ -192,10 +193,23 @@ public final class CamService extends Service {
         }
     }
 
+    private void restartPipelineIfOn() {
+        if (!running || !wanted) {
+            return;
+        }
+        boolean ok = startPipeline();
+        publish(Payloads.STATE, Payloads.statePayload(ok), true, false);
+        show(ok);
+        if (!ok && wanted) {
+            main.postDelayed(retry, 5_000);
+        }
+    }
+
     private boolean startPipeline() {
         stopPipeline();
-        rtsp = new RtspServer();
-        encoder = new AvcEncoder();
+        int fps = Prefs.load(this).fps;
+        rtsp = new RtspServer(fps);
+        encoder = new AvcEncoder(fps);
         try {
             Surface encoderSurface = encoder.start(new AvcEncoder.Listener() {
                 @Override
@@ -222,7 +236,7 @@ public final class CamService extends Service {
             Surface cameraSurface = encoderSurface;
             if (FrameOrientation.needsGl()) {
                 gl = new GlFrame();
-                cameraSurface = gl.start(encoderSurface);
+                cameraSurface = gl.start(encoderSurface, fps);
                 if (cameraSurface == null) {
                     Log.w(TAG, "gl: " + gl.error());
                     stopPipeline();
@@ -241,7 +255,7 @@ public final class CamService extends Service {
             }
             rtsp.start();
             pipelineUp = true;
-            Log.i(TAG, "pipeline on");
+            Log.i(TAG, "pipeline on " + fps + " fps");
             return true;
         } catch (Exception e) {
             Log.w(TAG, "pipeline: " + scrub(e.getMessage()));
@@ -466,7 +480,7 @@ public final class CamService extends Service {
         return new Notification.Builder(this, CHANNEL)
                 .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle("Wallpanel Kamera")
-                .setContentText(on ? "Kamera an" : "Kamera aus")
+                .setContentText(on ? "Kamera an, " + Prefs.load(this).fps + " fps" : "Kamera aus")
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pending)
