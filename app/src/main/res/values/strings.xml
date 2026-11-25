@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wallpanel Kamera</string>
+    <string name="settings_title">MQTT-Server</string>
+    <string name="status_starting">Starte</string>
+    <string name="hint_host">Broker-Host</string>
+    <string name="hint_port">Port</string>
+    <string name="hint_user">Benutzer</string>
+    <string name="hint_password">Passwort</string>
+    <string name="save">Speichern und verbinden</string>
+    <string name="help">Speichern verbindet neu. Der Schalter in Home Assistant bleibt. Zurück blendet diese Seite aus.</string>
+</resources>
